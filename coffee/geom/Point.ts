@@ -1,46 +1,58 @@
 class Point
 {
-    private var length;
-    private var x;
-    private var y;
+    private length : number;
+    private x : number;
+    private y : number;
     
-    public function constructor(x = 0, y = 0)
+    public constructor(x = 0, y = 0)
     {
         this.x = x;
         this.y = y;
     }
-
-    public function add(o)
+    
+    
+    public add(o: Point)
     {
-        new Point @x + o.x, @y + o.y
+        return new Point(this.x + o.getX(), this.y + o.getY());
     }
-
-    public function subtract(o)
+    
+    
+    public subtract(o: Point)
     {
-        new Point @x - o.x, @y - o.y
+        return new Point(this.x - o.getX(), this.y - o.getY());
     }
-
-    public function mult(k)
+    
+    
+    public mult(k)
     {
-        new Point @x * k, @y * k
+        return new Point(this.x * k, this.y * k);
     }
-
-    public function divide(k)
+    
+    
+    public divide(k)
     {
-        new Point @x / k, @y / k
+        return new Point(this.x / k, this.y / k);
     }
     
     // TODO replace these with getLength() etc.
-    @property 'length',
-        get: ->
-          sqrt @x * @x + @y * @y
+          
 
-      @property 'direction',
-        get: ->
-          atan2 @y, @x
+    public getLength()
+    {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
 
-      @property 'normalized',
-        get: ->
-          new Point @x / @length, @y / @length
-
+    public getDirection()
+    {
+        return Math.atan2(this.y, this.x);
+    }
+          
+    public getNoramalized()
+    {
+        return new Point(this.x / this.length, this.y / this.length);
+    }
+    
+    // accessors
+    public getX() { return this.x; }
+    public getY() { return this.y; }
 }

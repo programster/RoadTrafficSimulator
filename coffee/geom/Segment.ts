@@ -1,62 +1,72 @@
 
 class Segment
 {
-    private var source = source;
-    private var target = target;
+    private source : Point;
+    private target : Point;
     
-    private function constructor(source, target)
+    constructor(source: Point, target: Point)
     {
         this.source = source;
         this.target = target;
     }
-
-    private function split(n, reverse)
+    
+    
+    private split(numSegments : number, reverse? : boolean)
     {
         if (reverse)
         {
-            order = [n - 1 .. 0];
+            var start = numSegments - 1;
+            var end = 0;
         }
         else
         {
-            order = [0 .. n - 1];
+            var start = 0;
+            var end = (numSegments - 1);
         }
         
-        for (k in order)
+        
+        for (let k= start; k <= end; k++)
         {
-            this.subsegment((k / n), ((k + 1) / n));
+            this.subsegment((k / numSegments), ((k + 1) / numSegments));
         }
     }
     
     
-    private function getPoint(a)
+    public getPoint(a)
     {
-        return this.source.add(this.vector.mult(a))
+        return this.source.add(this.getVector().mult(a))
     }
     
     
-    private function subsegment(a, b)
+    private subsegment(a, b)
     {
-        offset = this.vector;
-        start = this.source.add(offset.mult(a))
-        end = this.source.add(offset.mult(b))
-        retrun new Segment(start, end);
+        var offset = this.getVector();
+        var start = this.source.add(offset.mult(a))
+        var end = this.source.add(offset.mult(b))
+        return new Segment(start, end);
     }
     
     
-    this.property 'vector',
-        get: ->
-          this.target.subtract this.source
+    public getVector()
+    {
+        return this.target.subtract(this.source);
+    }
+    
+    
+    public getLength()
+    {
+        return this.getVector().getLength();
+    }
 
-      this.property 'length',
-        get: ->
-          this.vector.length
-
-      this.property 'direction',
-        get: ->
-          this.vector.direction
-
-      this.property 'center',
-        get: ->
-          this.getPoint 0.5
-
+          
+    public getDirection()
+    {
+        return this.getVector().getDirection();
+    }
+    
+    
+    public getCenter()
+    {
+        return this.getPoint(0.5);
+    }
 }
