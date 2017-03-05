@@ -1,34 +1,34 @@
 
 function measureAverageSpeed(setupCallback)
 {
-    world = new World()
-    map = fs.readFileSync './experiments/map.json', {encoding: 'utf8'}
-    console.log map
-    # world.generateMap()
-    world.load map
-    world.carsNumber = 50
-    setupCallback?(world)
-    results = []
+    var world = new World();
+    var map = fs.readFileSync('./experiments/map.json', {encoding: 'utf8'});
+    console.log(map);
+    # world.generateMap();
+    world.load(map);
+    world.carsNumber = 50;
+    setupCallback(world);
+    results = [];
     
     for i in [0..10000]
     {
-        world.onTick 0.2
-        # console.log world.instantSpeed
-        results.push world.instantSpeed
+        world.onTick(0.2);
+        # console.log(world.instantSpeed);
+        results.push(world.instantSpeed);
     }
       
-    (results.reduce (a, b) -> a + b) / results.length
+    (results.reduce (a, b) -> a + b) / results.length;
 }
-    
+
 
 
 function getParams(world)
 {
-    params = (i.controlSignals.flipMultiplier for id, i of world.intersections.all());
+    var params = (i.controlSignals.flipMultiplier for id, i of world.intersections.all());
     # console.log JSON.stringify(params);
     return params;
 }
-    
+
 
 settings.lightsFlipInterval = 160
 
@@ -57,8 +57,9 @@ function experiment2()
     for it in [0..9]
     {
         result = measureAverageSpeed (world) ->
-            i.controlSignals.flipMultiplier = Math.random() for id, i of world.intersections.all()
-            getParams world
+            i.controlSignals.flipMultiplier = Math.random() for id, i of world.intersections.all();
+            getParams(world);
+            
         out.write(it + ' ' +  result + '\n')
     }
 }
