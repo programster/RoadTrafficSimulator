@@ -1,4 +1,7 @@
-# RoadTrafficSimulator
+# RoadTrafficSimulator 3D
+
+This project is a fork of [volkhin / RoadTrafficSimulator](https://github.com/volkhin/RoadTrafficSimulator), but aims to merge and extend the 3d work [here](https://github.com/lo-th/root/tree/gh-pages/traffic). This is elevation is an important factor to take into account when simulating roads.
+
 
 Traffic simulator and road lights adjuster using
 [Intelligent Driver Model](https://en.wikipedia.org/wiki/Intelligent_driver_model)
