@@ -3,7 +3,7 @@ class ToolHighlighter extends Tool
 {
     public function constructor()
     {
-        super arguments...
+        super(arguments);
         this.hoveredCell = null
     }
     

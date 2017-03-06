@@ -1,81 +1,97 @@
 
 class Zoomer extends Tool
 {
-    protected _scale;
-    protected screenCenter;
-    protected center;
+    protected defaultZoom : number;
+    protected _scale : number;
+    protected screenCenter : Point;
+    protected center : Point;
     
     
-    constructor: (this.defaultZoom, this.visualizer, args...)
+    public constructor(defaultZoom: number, visualizer: Visualizer, bind?)
     {
-        super this.visualizer, args...;
-        this.ctx = this.visualizer.ctx;
-        this.canvas = this.ctx.canvas;
+        super(visualizer, bind);
+        this.defaultZoom = defaultZoom;
         this._scale = 1;
-        this.screenCenter = new Point this.canvas.width / 2, this.canvas.height / 2;
-        this.center = new Point this.canvas.width / 2, this.canvas.height / 2;
+        this.screenCenter = new Point(this.canvas.width / 2, this.canvas.height / 2);
+        this.center = new Point(this.canvas.width / 2, this.canvas.height / 2);
     }
     
     
-    this.property 'scale',
-        get: -> this._scale;
-        set: (scale) -> this.zoom scale, this.screenCenter;
-    
-    
-    toCellCoords: (point)
+        
+    public getScale()
     {
-        gridSize = settings.gridSize;
-        centerOffset = point.subtract(this.center).divide(this.scale);
-        x = centerOffset.x // (this.defaultZoom * gridSize) * gridSize;
-        y = centerOffset.y // (this.defaultZoom * gridSize) * gridSize;
-        new Rect x, y, gridSize, gridSize;
+        return this._scale;
+    }
+    
+    public setScale(scale : number)
+    {
+        return this.zoom(scale, this.screenCenter);
     }
     
     
-    public function getBoundingBox(cell1, cell2)
+    public toCellCoords(point : Point) : Rect
     {
-        cell1 ?= this.toCellCoords new Point 0, 0;
-        cell2 ?= this.toCellCoords new Point this.canvas.width, this.canvas.height;
-        x1 = cell1.x;
-        y1 = cell1.y;
-        x2 = cell2.x;
-        y2 = cell2.y;
-        xMin = min cell1.left(), cell2.left();
-        xMax = max cell1.right(), cell2.right();
-        yMin = min cell1.top(), cell2.top();
-        yMax = max cell1.bottom(), cell2.bottom();
+        var centerOffset = point.subtract(this.center).divide(this._scale);
+        var x = centerOffset.getX() // (this.defaultZoom * gridSize) * gridSize;
+        var y = centerOffset.getY() // (this.defaultZoom * gridSize) * gridSize;
+        return new Rect(x, y, Settings.gridSize, Settings.gridSize);
+    }
+    
+    
+    public getBoundingBox(cell1? : Rect, cell2? : Rect)
+    {
+        if (!cell1)
+        {
+            var cell1 = this.toCellCoords(new Point(0, 0));
+        }
+        
+        if (!cell2)
+        {
+            var cell2 = this.toCellCoords(new Point(this.canvas.width, this.canvas.height));
+        }
+        
+        var x1 = cell1.getX();
+        var y1 = cell1.getY();
+        var x2 = cell2.getX();
+        var y2 = cell2.getY();
+        
+        var xMin = Math.min(cell1.left(), cell2.left());
+        var xMax = Math.max(cell1.right(), cell2.right());
+        var yMin = Math.min(cell1.top(), cell2.top());
+        var yMax = Math.max(cell1.bottom(), cell2.bottom());
+        
         return new Rect(xMin, yMin, (xMax - xMin), (yMax - yMin));
     }
     
     
-    public function transform()
+    public transform()
     {
-        this.ctx.translate this.center.x, this.center.y;
-        k = this.scale * this.defaultZoom;
+        this.ctx.translate(this.center.getX(), this.center.getY());
+        var k = this._scale * this.defaultZoom;
         this.ctx.scale(k, k);
     }
     
     
-    public function zoom(k, zoomCenter)
+    public zoom(k : number, zoomCenter: Point)
     {
-        k ?= 1;
-        offset = this.center.subtract zoomCenter;
-        this.center = zoomCenter.add offset.mult k / this._scale;
+        // If you find code that is not setting k, then update it to use 1
+        var offset = this.center.subtract(zoomCenter);
+        this.center = zoomCenter.add(offset.mult(k / this._scale));
         this._scale = k;
     }
     
     
-    public function moveCenter(offset)
+    public moveCenter(offset)
     {
         this.center = this.center.add(offset);
     }
     
     
-    public function mousewheel(e)
+    public mousewheel(e)
     {
-        offset = e.deltaY * e.deltaFactor;
-        zoomFactor = 2 ** (0.001 * offset);
-        this.zoom this.scale * zoomFactor, this.getPoint(e);
+        var offset = e.deltaY * e.deltaFactor;
+        var zoomFactor = 2 ** (0.001 * offset);
+        this.zoom(this._scale * zoomFactor, this.getPoint(e));
         e.preventDefault();
     }
 }

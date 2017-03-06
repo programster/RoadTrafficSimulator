@@ -2,33 +2,47 @@
 
 class Car
 {
-    constructor: (lane, position)
+    private id;
+    private color;
+    private _speed;
+    private width;
+    private length;
+    private maxSpeed;
+    private s0;
+    private timeHeadway;
+    private maxAcceleration;
+    private maxDeceleration;
+    private trajectory;
+    private alive;
+    private preferedLane;
+    
+    public constructor(lane, position)
     {
-        this.id = _.uniqueId 'car'
-        this.color = (300 + 240 * random() | 0) % 360
-        this._speed = 0
-        this.width = 1.7
-        this.length = 3 + 2 * random()
-        this.maxSpeed = 30
-        this.s0 = 2
-        this.timeHeadway = 1.5
-        this.maxAcceleration = 1
-        this.maxDeceleration = 3
-        this.trajectory = new Trajectory this, lane, position
-        this.alive = true
-        this.preferedLane = null
+        this.id = _.uniqueId 'car';
+        this.color = (300 + 240 * Math.random() | 0) % 360;
+        this._speed = 0;
+        this.width = 1.7;
+        this.length = 3 + 2 * Math.random();
+        this.maxSpeed = 30;
+        this.s0 = 2;
+        this.timeHeadway = 1.5;
+        this.maxAcceleration = 1;
+        this.maxDeceleration = 3;
+        this.trajectory = new Trajectory(this, lane, position);
+        this.alive = true;
+        this.preferedLane = null;
     }
     
     
-    public function release()
+    public release()
     {
         this.trajectory.release()
     }
     
     
-    public function getAcceleration()
+    public getAcceleration()
     {
-        nextCarDistance = this.trajectory.nextCarDistance;
+        var nextCarDistance = this.trajectory.nextCarDistance;
         distanceToNextCar = max(nextCarDistance.distance, 0);
         a = this.maxAcceleration;
         b = this.maxDeceleration;
@@ -46,7 +60,7 @@ class Car
     }
     
     
-    public function move(delta)
+    public move(delta)
     {
         acceleration = this.getAcceleration();
         this.speed += acceleration * delta;
@@ -83,7 +97,7 @@ class Car
         }
         
         step = this.speed * delta + 0.5 * acceleration * delta ** 2
-        # TODO: hacks, should have changed speed
+        // TODO: hacks, should have changed speed
         console.log 'bad IDM' if this.trajectory.nextCarDistance.distance < step
         
         if this.trajectory.timeToMakeTurn(step)
@@ -95,7 +109,7 @@ class Car
     }
     
     
-    public function pickNextRoad()
+    public pickNextRoad()
     {
         intersection = this.trajectory.nextIntersection;
         currentLane = this.trajectory.current.lane;
@@ -115,7 +129,7 @@ class Car
     }
     
     
-    public function pickNextLane()
+    public pickNextLane()
     {
         if (this.nextLane)
         {
@@ -134,21 +148,9 @@ class Car
         
         switch (turnNumber)
         {
-            case 0:
-            {
-                laneNumber = nextRoad.lanesNumber - 1;
-            };
-            
-            case 1:
-            {
-                laneNumber = _.random 0, nextRoad.lanesNumber - 1;
-            };
-            
-            case 2:
-            {
-                laneNumber = 0;
-            };
-            
+            case 0: { laneNumber = nextRoad.lanesNumber - 1; };
+            case 1: { laneNumber = _.random 0, nextRoad.lanesNumber - 1; };
+            case 2: { laneNumber = 0; };
         }
         
         this.nextLane = nextRoad.lanes[laneNumber];
@@ -164,10 +166,10 @@ class Car
     
     public function popNextLane()
     {
-        nextLane = this.nextLane
-        this.nextLane = null
-        this.preferedLane = null
-        return nextLane
+        nextLane = this.nextLane;
+        this.nextLane = null;
+        this.preferedLane = null;
+        return nextLane;
     }
         
         

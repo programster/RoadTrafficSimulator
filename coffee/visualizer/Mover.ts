@@ -1,33 +1,35 @@
 
 class Mover extends Tool
 {
-    public function constructor:
+    private startPosition;
+    
+    public constructor(visualizer: Visualizer, bind? : boolean)
     {
-        super arguments...
+        super(visualizer, bind);
         this.startPosition = null;
     }
     
     
-    public function contextmenu()
+    public contextmenu()
     {
         return false;
     }
     
     
-    public function mousedown(e)
+    public mousedown(e)
     {
         this.startPosition = this.getPoint(e);
         e.stopImmediatePropagation();
     }
     
     
-    public function mouseup()
+    public mouseup()
     {
         this.startPosition = null;
     }
     
     
-    public function mousemove(e)
+    public mousemove(e)
     {
         if (this.startPosition)
         {
@@ -38,7 +40,7 @@ class Mover extends Tool
     }
     
     
-    public function mouseout()
+    public mouseout()
     {
         this.startPosition = null;
     }

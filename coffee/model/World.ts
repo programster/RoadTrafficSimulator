@@ -1,36 +1,43 @@
 
 class World
 {
-    public function constructor()
+    private set = {};
+    
+    public constructor()
     {
         this.set = {};
     }
     
     
-    public function set(obj)
+    public set(obj)
     {
-        obj ?= {}
-        this.intersections = new Pool Intersection, obj.intersections
-        this.roads = new Pool Road, obj.roads
-        this.cars = new Pool Car, obj.cars
-        this.carsNumber = 0
-        this.time = 0
+        obj ?= {};
+        this.intersections = new Pool(Intersection, obj.intersections);
+        this.roads = new Pool(Road, obj.roads);
+        this.cars = new Pool(Car, obj.cars);
+        this.carsNumber = 0;
+        this.time = 0;
     }
     
     
-    public function save()
+    public save()
     {
         data = _.extend {}, this
         delete data.cars
-        localStorage.world = JSON.stringify data
+        localStorage.world = JSON.stringify(data);
     }
     
     
-    public function load: (data)
+    public load(data)
     {
-        data = data or localStorage.world
-        data = data and JSON.parse data
-        return unless data?
+        data = data or localStorage.world;
+        data = data and JSON.parse(data);
+        
+        if (!data)
+        {
+            return new Error("World cannot load any data.");
+        }
+        
         this.clear()
         this.carsNumber = data.carsNumber or 0
         
@@ -48,11 +55,14 @@ class World
         }
     }
 
-
-    public function generateMap(minX = -2, maxX = 2, minY = -2, maxY = 2)
+    
+    /**
+     * 
+     */
+    public generateMap(minX = -2, maxX = 2, minY = -2, maxY = 2)
     {
         this.clear();
-        intersectionsNumber = (0.8 * (maxX - minX + 1) * (maxY - minY + 1)) | 0
+        var intersectionsNumber = (0.8 * (maxX - minX + 1) * (maxY - minY + 1));
         map = {};
         gridSize = settings.gridSize
         step = 5 * gridSize
@@ -73,59 +83,83 @@ class World
             }
         }
         
-        for x in [minX..maxX]
+        for (let x = minX; x <= maxX; x++)
         {
-            previous = null;
+            var previousIntersection = null;
               
-            for y in [minY..maxY]
+            for (let y = minY; y <= maxY; y++)
             {
-                intersection = map[[x, y]];
+                var intersection = map[[x, y]];
                 
-                if intersection?
+                if (intersection)
                 {
-                    if random() < 0.9
+                    if (Math.random() < 0.9)
                     {
-                        this.addRoad new Road intersection, previous if previous?
-                        this.addRoad new Road previous, intersection if previous?
+                        if (previousIntersection)
+                        {
+                            var road1 = new Road(intersection, previousIntersection);
+                            var road2 = new Road(previousIntersection, intersection);
+                        }
+                        else
+                        {
+                            var road1 = new Road(intersection, null);
+                            var road2 = new Road(previousIntersection, null);
+                        }
+                        
+                        this.addRoad(road1);
+                        this.addRoad(road2);
                     }
-                          
-                    previous = intersection;
+                    
+                    previousIntersection = intersection;
                 }
             }
         }
         
-        for y in [minY..maxY]
+        for (let y=minY; y <= maxY; y++)
         {
-            previous = null;
+            var previous = null;
             
-            for (x in [minX..maxX])
+            for (let x =minX; x <= maxX; x++)
             {
                 intersection = map[[x, y]];
                 
                 if (intersection)
                 {
-                    if random() < 0.9
+                    if (Math.random() < 0.9)
                     {
-                        this.addRoad new Road intersection, previous if previous?
-                        this.addRoad new Road previous, intersection if previous?
+                        if (previous)
+                        {
+                            var road1 = new Road(intersection, previous)
+                            var road2 = new Road(previous, intersection)
+                        }
+                        else
+                        {
+                            var road1 = new Road(intersection, null)
+                            var road2 = new Road(previous, null)
+                        }
+                        
+                        this.addRoad(road1);
+                        this.addRoad(road2);
                     }
                     
-                    previous = intersection
+                    previous = intersection;
                 }
             }
         }
-        
-        return null;
     }
     
     
-    public function clear() { this.set = {}; }
+    public clear() { this.set = {}; }
     
     
-    public function onTick(delta)
+    public onTick(delta)
     {
-        throw Error 'delta > 1' if delta > 1
-        this.time += delta
+        if (delta > 1)
+        {
+            return new Error('delta > 1');
+        }
+        
+        this.time += delta;
         this.refreshCars();
         
         for id, intersection of this.intersections.all()
@@ -141,31 +175,38 @@ class World
     }
     
     
-    public function refreshCars()
+    public refreshCars()
     {
-        this.addRandomCar() if this.cars.length < this.carsNumber
-        this.removeRandomCar() if this.cars.length > this.carsNumber
+        if (this.cars.length < this.carsNumber)
+        {
+            this.addRandomCar() 
+        }
+        
+        if (this.cars.length > this.carsNumber)
+        {
+            this.removeRandomCar() 
+        }
     }
     
     
-    public function addRoad(road)
+    public addRoad(road)
     {
-        this.roads.put road
-        road.source.roads.push road
-        road.target.inRoads.push road
-        road.update()
+        this.roads.put(road);
+        road.source.roads.push(road);
+        road.target.inRoads.push(road);
+        road.update();
     }
     
     
-    public function getRoad(id){ this.roads.get(id); }
-    public function addCar(car){ this.cars.put(car); }
-    public function getCar(id) { this.cars.get(id); }
-    public function removeCar(car) { this.cars.pop(car); }
-    public function addIntersection(intersection) { this.intersections.put(intersection); }
-    public function getIntersection: (id) { this.intersections.get(id); }
+    public getRoad(id : number){ this.roads.get(id); }
+    public addCar(car){ this.cars.put(car); }
+    public getCar(id) { this.cars.get(id); }
+    public removeCar(car) { this.cars.pop(car); }
+    public addIntersection(intersection) { this.intersections.put(intersection); }
+    public getIntersection: (id) { this.intersections.get(id); }
     
     
-    public function addRandomCar()
+    public addRandomCar()
     {
         road = _.sample this.roads.all();
         
@@ -177,7 +218,7 @@ class World
     }
     
     
-    public function removeRandomCar()
+    public removeRandomCar()
     {
         car = _.sample this.cars.all();
         
@@ -187,11 +228,10 @@ class World
         }
     }
 
-          
-          
-        this.property 'instantSpeed',
-        get: ->
-          speeds = _.map this.cars.all(), (car) -> car.speed
-          return 0 if speeds.length is 0
-          return (_.reduce speeds, (a, b) -> a + b) / speeds.length
+    
+    this.property 'instantSpeed',
+    get: ->
+      speeds = _.map this.cars.all(), (car) -> car.speed
+      return 0 if speeds.length is 0
+      return (_.reduce speeds, (a, b) -> a + b) / speeds.length
 }

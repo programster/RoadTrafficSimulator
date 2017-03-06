@@ -1,9 +1,9 @@
 
 class Graphics
 {
-    private var m_ctx;
+    private m_ctx;
     
-    public function constructor(ctx) 
+    public constructor(ctx) 
     {
         this.m_ctx = ctx;
     }

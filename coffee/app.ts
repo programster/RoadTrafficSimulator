@@ -1,10 +1,14 @@
-
+/// <reference path="../libs/jquery/jquery.d.ts" />
 
 var canvas = document.createElement("canvas");
 canvas.setAttribute("id", "canvas");
 $(document.body).append(canvas)
 
-window.world = new World();
+interface Window { TrafficSim: any; }
+
+
+var world = new World();
+window.TrafficSim.world = world;
 world.load();
 
 if world.intersections.length is 0

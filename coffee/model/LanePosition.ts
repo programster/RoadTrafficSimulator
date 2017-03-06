@@ -1,12 +1,12 @@
 class LanePosition
 {
-    private var car;
-    private var position;
-    private var id;
-    private var free;
-    private var lane;
+    private car;
+    private position;
+    private id;
+    private free;
+    private lane;
     
-    public function constructor: (car, lane, position)
+    public constructor(car, lane, position)
     {
         this.car = car;
         this.position = position;
@@ -15,7 +15,7 @@ class LanePosition
         this.lane = lane;
     }
     
-    public function acquire()
+    public acquire()
     {
         if (this.lane?.addCarPosition?)
         {
@@ -25,19 +25,22 @@ class LanePosition
     }
     
     
-    public function release()
+    public release()
     {
-        if not this.free and this.lane?.removeCar
+        if (!this.free && this.lane?.removeCar)
         {
-            this.free = true
-            this.lane.removeCar this
+            this.free = true;
+            this.lane.removeCar(this);
         }
     }
     
     
-    public function getNext()
+    public getNext()
     {
-        return this.lane.getNext this if this.lane and not this.free
+        if (this.lane && !this.free)
+        {
+            return this.lane.getNext(this)
+        }
     }
     
     

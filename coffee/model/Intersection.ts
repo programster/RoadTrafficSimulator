@@ -1,14 +1,14 @@
 
 class Intersection
 {
-    private var rect;
-    private var id;
-    private var roads;
-    private var inRoads;
-    private var controlSignals;
+    private rect : Rect;
+    private id;
+    private roads;
+    private inRoads;
+    private controlSignals;
     
     
-    public function constructor(rect)
+    public constructor(rect : Rect)
     {
         this.rect = rect;
         this.id = _.uniqueId('intersection');
@@ -18,7 +18,7 @@ class Intersection
     }
     
     
-    public function copy: (intersection) 
+    public copy(intersection) 
     {
         intersection.rect = Rect.copy(intersection.rect);
         result = new Intersection();
@@ -30,19 +30,27 @@ class Intersection
     }
     
     
-    public function toJSON()
+    public toJSON()
     {
         return {
-            id: this.id
-            rect: this.rect
+            id: this.id,
+            rect: this.rect,
             controlSignals: this.controlSignals
         }
     }
     
     
-    public function update()
+    public update()
     {
-        road.update() for road in @roads
-        road.update() for road in @inRoads
+        for (var road of this.roads)
+        {
+            road.update();
+        }
+        
+        
+        for (var road of this.inRoads)
+        {
+            road.update();
+        }
     }
 }

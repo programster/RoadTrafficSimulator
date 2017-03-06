@@ -1,14 +1,14 @@
 
 class Trajectory
 {
-    private var car;
-    private var current;
-    private var current;
-    private var next;
-    private var temp;
-    private var isChangingLanes;
+    private car;
+    private current;
+    private current;
+    private next;
+    private temp;
+    private isChangingLanes;
         
-    public function constructor(car, lane, position)
+    public constructor(car, lane, position)
     {
         this.car = car;
         position ?= 0;
@@ -96,9 +96,12 @@ class Trajectory
         nextPosition = this.current.position + 3 * this.car.length
         throw Error 'too late to change lane' unless nextPosition < this.lane.length
         this._startChangingLanes nextLane, nextPosition
-
+    }
+    
     public function _getIntersectionLaneChangeCurve()
     {
+        
+    }
 
     public function _getAdjacentLaneChangeCurve()
     {

@@ -194,4 +194,7 @@ class Rect
     {
         return this.getSide(this.getSectorId(point));
     }
+    
+    public getX() { return this.x; }
+    public getY() { return this.y; }
 }
